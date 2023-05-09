@@ -33,7 +33,8 @@ def make_event_list(calendar_string: str) -> list:
         start = event.begin
         date = f"{start.year}-{start.month:02d}-{start.day:02d} {start.hour:02d}:{start.minute:02d}"
         name = event.name
-        events_csv_list.append([date, name])
+        description = event.description
+        events_csv_list.append([date, name, description])
     return events_csv_list
 
 def convert_list_to_csv(events_csv_list: list, output_name: str,) -> None:
