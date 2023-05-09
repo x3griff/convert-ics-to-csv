@@ -31,7 +31,7 @@ def make_event_list(calendar_string: str) -> list:
     # get the holiday name
     for event in events:
         start = event.begin
-        date = f"{start.year}-{start.month}-{start.day}"
+        date = f"{start.year}-{start.month:02d}-{start.day:02d}"
         name = event.name
         events_csv_list.append([date, name])
     return events_csv_list
