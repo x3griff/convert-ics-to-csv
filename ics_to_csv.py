@@ -1,3 +1,5 @@
+import os
+import sys
 import ics
 import csv
 import re
@@ -60,9 +62,10 @@ def convert_list_to_csv(events_csv_list: list, output_name: str,) -> None:
         writer.writerows(events_csv_list)
 
 if __name__ == "__main__":
-    calendar_string = convert_ics_to_string('holidays.ics')
+    calendar_string = convert_ics_to_string(sys.argv[1])
     event_list = make_event_list(calendar_string)
-    convert_list_to_csv(event_list, "holidays.csv")
+    base_file_path = os.path.splitext(sys.argv[1])[0]
+    convert_list_to_csv(event_list, os.path.splitext(sys.argv[1])[0] + ".csv")
 
 
 
