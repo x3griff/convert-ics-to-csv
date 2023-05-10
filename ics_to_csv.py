@@ -1,6 +1,6 @@
 import ics
 import csv
-
+import re
 
 def convert_ics_to_string(filename: str) -> str:
     # open the ICS file and write contents to string
@@ -13,6 +13,15 @@ def convert_ics_to_string(filename: str) -> str:
             calendar_string += line
     return calendar_string
 
+def multi_replace(dict, text):
+  if text is not None:
+    # Create a regular expression from the dictionary keys
+    regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
+    # For each match, look-up corresponding value in dictionary
+    return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text) 
+  else:
+    return text
+  
 def make_event_list(calendar_string: str) -> list:
     #uses ics library to turn calendar string into object
     try:
@@ -24,16 +33,23 @@ def make_event_list(calendar_string: str) -> list:
     events = calendar[0].events 
 
     # create list where each item will be a line in the csv output
-    events_csv_list = [["Date", "Holiday"]] 
+    events_csv_list = [["Date", "Name", "Description"]] 
+
+    # create a dictionary of text to be replaced in fields
+    replacement_text = {
+        "\n" : " ",
+        "  " : " "
+    }
 
     # loop through event set
-    # get date of holiday (in this case, holidays are all one day so the begin date is enough)
-    # get the holiday name
+    # get date of event (in this case, events are all one day so the begin date is enough)
+    # get the event name and description
+    # replace repeating text in description field 
     for event in events:
         start = event.begin
         date = f"{start.year}-{start.month:02d}-{start.day:02d} {start.hour:02d}:{start.minute:02d}"
         name = event.name
-        description = event.description
+        description = multi_replace(replacement_text, event.description)
         events_csv_list.append([date, name, description])
     return events_csv_list
 
